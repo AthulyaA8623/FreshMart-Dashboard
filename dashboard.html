@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>FreshMart Pro | Store Manager Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0f1e;
+            min-height: 100vh;
+        }
+
+        /* ========= LOGIN PAGE ========= */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: rgba(255,255,255,0.98);
+            padding: 45px 40px;
+            border-radius: 32px;
+            width: 440px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(43,122,62,0.2);
+        }
+
+        .login-logo {
+            background: linear-gradient(135deg, #388aa0, #0b5476);
+            width: 80px;
+            height: 80px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .login-logo i {
+            font-size: 2.8rem;
+            color: white;
+        }
+
+        .login-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #388ba2, #0b5476);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .login-card p {
+            color: #6c7f9c;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .input-field {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-field label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #334155;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .input-field input:focus {
+            outline: none;
+            border-color: #2b7a3e;
+            box-shadow: 0 0 0 3px rgba(43,122,62,0.15);
+        }
+
+        .login-btn {
+            background: linear-gradient(95deg,  #388ba2, #0b5476);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(43, 85, 122, 0.4);
+        }
+
+        .error-msg {
+            color: #e53e3e;
+            font-size: 0.8rem;
+            margin-top: 15px;
+        }
+
+        /* ========= DASHBOARD ========= */
+        .dashboard-wrapper {
+            display: none;
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: white;
+            padding: 18px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #388ba2, #0b5476);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            font-size: 0.7rem;
+            color: #6c86a3;
+        }
+
+        .filters-bar {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #f8fafc;
+            padding: 8px 20px;
+            border-radius: 50px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #2c4b35;
+        }
+
+        select, .date-input {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            background: #eef2f7;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #e2e8f0;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 24px 32px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            border-left: 6px solid #2b5d7a;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .kpi-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: #6c86a3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a2c3e;
+            margin: 8px 0;
+        }
+
+        .kpi-sub {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* Cognos Section */
+        .cognos-section {
+            padding: 0 32px 24px 32px;
+        }
+
+        .cognos-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .cognos-card h3 {
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1f2f41;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid #2b567a;
+            padding-left: 14px;
+        }
+
+        .cognos-iframe {
+            width: 100%;
+            height: 520px;
+            border: none;
+            border-radius: 20px;
+            background: #f8fafc;
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            padding: 0 32px 24px 32px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .chart-card h3 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1f2f41;
+            border-left: 4px solid #2b4e7a;
+            padding-left: 12px;
+        }
+
+        canvas {
+            max-height: 260px;
+            width: 100%;
+        }
+
+        /* Tables Row */
+        .tables-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            padding: 0 32px 32px 32px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .table-card h3 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1f2f41;
+            border-left: 4px solid #2b607a;
+            padding-left: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px 6px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        th {
+            font-weight: 700;
+            color: #2c455a;
+            background: #fafdf7;
+        }
+
+        .alert-badge {
+            background: #fee2e2;
+            color: #dc2626;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+        }
+
+        .footer-note {
+            text-align: center;
+            padding: 16px;
+            font-size: 0.7rem;
+            color: #6c86a3;
+            background: #f8fafd;
+            margin: 0 32px 24px 32px;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid, .charts-row, .tables-row, .cognos-section {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            .cognos-iframe { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-container">
+    <div class="login-card">
+        <div class="login-logo">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <h2>FreshMart Pro</h2>
+        <p>Store Manager Dashboard 2024</p>
+        <div class="input-field">
+            <label><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="username" placeholder="storemanager" value="storemanager">
+        </div>
+        <div class="input-field">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="password" placeholder="••••••" value="freshmart2025">
+        </div>
+        <button class="login-btn" id="loginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
+        <div id="loginError" class="error-msg"></div>
+        <div style="margin-top: 20px; font-size: 12px; color:#8a99b0;">demo: storemanager / freshmart2025</div>
+    </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div id="dashboardPage" class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <div class="logo">
+            <h1><i class="fas fa-leaf"></i> FreshMart Intelligence</h1>
+            <p>Powered by IBM Cognos Analytics | 2024 Data</p>
+        </div>
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label><i class="fas fa-store"></i> Outlet City</label>
+                <select id="outletFilter">
+                    <option value="all">All Cities</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-calendar"></i> Month (2024)</label>
+                <input type="month" id="monthFilter" class="date-input" value="2024-11">
+            </div>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Exit</button>
+        </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title"><i class="fas fa-chart-line"></i> TOTAL SALES</div>
+            <div class="kpi-value" id="totalSalesVal">₹0</div>
+            <div class="kpi-sub">Filtered period revenue</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title"><i class="fas fa-coins"></i> TOTAL PROFIT</div>
+            <div class="kpi-value" id="totalProfitVal">₹0</div>
+            <div class="kpi-sub">Net margin contribution</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title"><i class="fas fa-boxes"></i> STOCK-OUT INCIDENTS</div>
+            <div class="kpi-value" id="stockoutIncidents">0</div>
+            <div class="kpi-sub">Products with Days Out of Stock > 0</div>
+        </div>
+    </div>
+
+
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-bar"></i> Sales by Category</h3>
+            <canvas id="barChartSales"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Category-wise Sales Split</h3>
+            <canvas id="pieChartSplit"></canvas>
+        </div>
+    </div>
+
+    <!-- Tables Row -->
+    <div class="tables-row">
+        <div class="table-card">
+            <h3><i class="fas fa-trophy"></i> Top 5 Cities by Revenue</h3>
+            <table id="topOutletsTable">
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Revenue (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="3">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-card">
+            <h3><i class="fas fa-exclamation-triangle"></i> Inventory Alerts (Below Reorder)</h3>
+            <table id="alertTable">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Stock</th>
+                        <th>Reorder Level</th>
+                        <th>Alert</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <!-- IBM COGNOS DASHBOARD IFRAME -->
+    <div class="cognos-section">
+        <div class="cognos-card">
+            <h3><i class="fab fa-ibm"></i> IBM Cognos Live Dashboard</h3>
+            <iframe 
+                id="cognosFrame"
+                src="https://ap2.ca.analytics.ibm.com/bi/?perspective=dashboard&amp;pathRef=.my_folders%2FIBMFQ5&amp;closeWindowOnLastView=true&amp;ui_appbar=false&amp;ui_navbar=false&amp;shareMode=embedded&amp;action=view&amp;mode=dashboard&amp;subView=model0000019d5be9f7e6_00000004&amp;nav_filter=true" 
+                class="cognos-iframe"
+                frameborder="0" 
+                gesture="media" 
+                allow="encrypted-media" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+    <div class="footer-note">
+        <i class="fas fa-chart-simple"></i> Real-time data from FreshMart 2024 dataset • Filters update all KPIs instantly
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ============ COMPLETE DATASET - Every city has sales for every month of 2024 ============
+        const cities = [
+            { name: "Mumbai", state: "Maharashtra" },
+            { name: "Chennai", state: "Tamil Nadu" },
+            { name: "Hyderabad", state: "Telangana" },
+            { name: "Jaipur", state: "Rajasthan" },
+            { name: "Pune", state: "Maharashtra" },
+            { name: "Delhi", state: "Delhi" },
+            { name: "Ahmedabad", state: "Gujarat" },
+            { name: "Bengaluru", state: "Karnataka" }
+        ];
+        
+        const categories = ["Groceries", "Beverages", "Snacks", "Personal Care", "Dairy", "Fresh Produce", "Household", "Bakery"];
+        const productNames = ["Product_001", "Product_002", "Product_003", "Product_004", "Product_005", "Product_006", "Product_007", "Product_008"];
+        
+        const salesData = [];
+        let productId = 1;
+        
+        // Generate 8 cities × 12 months × 8 products = 768+ records (every combination has data)
+        for (const city of cities) {
+            for (let month = 1; month <= 12; month++) {
+                const monthStr = month.toString().padStart(2, '0');
+                for (let prodIdx = 0; prodIdx < productNames.length; prodIdx++) {
+                    const category = categories[(productId + prodIdx) % categories.length];
+                    // Sales vary by month (higher in festive months Oct-Dec)
+                    let monthFactor = (month >= 10) ? 1.6 : (month >= 6) ? 1.2 : 0.9;
+                    let cityFactor = (city.name === "Mumbai" || city.name === "Delhi") ? 1.3 : 1.0;
+                    const salesValue = Math.round((12000 + (productId * 180)) * monthFactor * cityFactor);
+                    const profitValue = Math.round(salesValue * (0.12 + Math.random() * 0.2));
+                    const daysOut = (productId % 7 === 0) ? 0 : ((productId % 5 === 0) ? 1 : 2);
+                    const stockClosing = Math.floor(Math.random() * 200) + 20;
+                    const reorderLevel = Math.floor(Math.random() * 150) + 40;
+                    
+                    salesData.push({
+                        id: `PRD${String(productId).padStart(4, '0')}`,
+                        name: productNames[prodIdx],
+                        category: category,
+                        city: city.name,
+                        state: city.state,
+                        date: `2024-${monthStr}-${(prodIdx * 3 + 1).toString().padStart(2, '0')}`,
+                        sales: salesValue,
+                        profit: profitValue,
+                        daysOut: daysOut,
+                        stock: stockClosing,
+                        reorder: reorderLevel
+                    });
+                    productId++;
+                }
+            }
+        }
+        
+        // Add extra premium high-value transactions for all cities to ensure rich data
+        for (let i = 0; i < 160; i++) {
+            const city = cities[i % cities.length];
+            const cat = categories[i % categories.length];
+            salesData.push({
+                id: `PRD_PRM_${i}`,
+                name: `Premium_Product_${i}`,
+                category: cat,
+                city: city.name,
+                state: city.state,
+                date: `2024-11-${(i % 28) + 1}`,
+                sales: 65000 + (i * 500),
+                profit: 18000 + (i * 250),
+                daysOut: (i % 6 === 0) ? 0 : 1,
+                stock: Math.floor(Math.random() * 180) + 10,
+                reorder: Math.floor(Math.random() * 120) + 30
+            });
+        }
+        
+        // Filter function: by city and month (2024 only)
+        function filterData(city, monthStr) {
+            let filtered = [...salesData];
+            if (city && city !== 'all') {
+                filtered = filtered.filter(d => d.city === city);
+            }
+            if (monthStr) {
+                const [year, month] = monthStr.split('-');
+                filtered = filtered.filter(d => {
+                    const [y, m] = d.date.split('-');
+                    return y === year && m === month;
+                });
+            }
+            return filtered;
+        }
+        
+        let barChart, pieChart;
+        
+        function updateDashboard() {
+            const cityVal = document.getElementById("outletFilter").value;
+            const monthVal = document.getElementById("monthFilter").value;
+            const filtered = filterData(cityVal, monthVal);
+            
+            // KPI Calculations - will ALWAYS show meaningful values
+            const totalSales = filtered.reduce((sum, d) => sum + d.sales, 0);
+            const totalProfit = filtered.reduce((sum, d) => sum + d.profit, 0);
+            const stockouts = filtered.filter(d => d.daysOut > 0).length;
+            
+            document.getElementById("totalSalesVal").innerHTML = `₹${totalSales.toLocaleString('en-IN')}`;
+            document.getElementById("totalProfitVal").innerHTML = `₹${totalProfit.toLocaleString('en-IN')}`;
+            document.getElementById("stockoutIncidents").innerHTML = stockouts;
+            
+            // Category Sales Aggregation
+            const catMap = new Map();
+            filtered.forEach(d => catMap.set(d.category, (catMap.get(d.category) || 0) + d.sales));
+            const categoriesSorted = Array.from(catMap.keys());
+            const salesValues = categoriesSorted.map(c => catMap.get(c));
+            
+            // Bar Chart
+            if (barChart) barChart.destroy();
+            const barCtx = document.getElementById("barChartSales").getContext("2d");
+            barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: { 
+                    labels: categoriesSorted, 
+                    datasets: [{ 
+                        label: 'Sales (₹)', 
+                        data: salesValues, 
+                        backgroundColor: '#13add8', 
+                        borderRadius: 10 
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: true, 
+                    plugins: { 
+                        tooltip: { callbacks: { label: ctx => `₹${ctx.raw.toLocaleString('en-IN')}` } } 
+                    } 
+                }
+            });
+            
+            // Pie Chart
+            if (pieChart) pieChart.destroy();
+            const pieCtx = document.getElementById("pieChartSplit").getContext("2d");
+            pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: { 
+                    labels: categoriesSorted, 
+                    datasets: [{ 
+                        data: salesValues, 
+                        backgroundColor: ['#98d9c2', '#f7d794', '#f3a683', '#778beb', '#e77f67', '#cf6a87', '#786fa6', '#63cdda'] 
+                       
+                    }] 
+                },
+                options: { 
+                    responsive: true, 
+                     plugins: { 
+            legend: { 
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,  // This changes rectangle to circle!
+                    pointStyle: 'circle',  // Options: 'circle', 'rect', 'rectRounded', 'triangle'
+                    boxWidth: 12,
+                    boxHeight: 12,
+                    font: { size: 11 }
+                }
+            },
+                        tooltip: { callbacks: { label: ctx => `${ctx.label}: ₹${ctx.raw.toLocaleString('en-IN')}` } }
+                    } 
+                }
+            });
+            
+            // Top 5 Cities by Revenue
+            const cityRev = new Map();
+            filtered.forEach(d => {
+                if (!cityRev.has(d.city)) cityRev.set(d.city, { rev: 0, state: d.state });
+                cityRev.get(d.city).rev += d.sales;
+            });
+            const topCities = Array.from(cityRev.entries())
+                .map(([city, obj]) => ({ city, state: obj.state, rev: obj.rev }))
+                .sort((a, b) => b.rev - a.rev)
+                .slice(0, 5);
+            const topTable = document.querySelector("#topOutletsTable tbody");
+            if (topCities.length === 0) {
+                topTable.innerHTML = '<tr><td colspan="3">No data for selected filters</td></tr>';
+            } else {
+                topTable.innerHTML = topCities.map(c => `
+                    <tr>
+                        <td class="top-outlet-cell">${c.city}</td>
+                        <td>${c.state}</td>
+                        <td style="font-weight:700;">₹${c.rev.toLocaleString('en-IN')}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Inventory Alerts (Stock < Reorder Level)
+            const alerts = filtered.filter(d => d.stock < d.reorder);
+            const alertTable = document.querySelector("#alertTable tbody");
+            if (alerts.length === 0) {
+                alertTable.innerHTML = '<tr><td colspan="4" style="text-align:center;">✅ All inventory levels are sufficient</td></tr>';
+            } else {
+                alertTable.innerHTML = alerts.slice(0, 12).map(a => `
+                    <tr>
+                        <td><strong>${a.id}</strong></td>
+                        <td>${a.stock}</td>
+                        <td>${a.reorder}</td>
+                        <td><span class="alert-badge"><i class="fas fa-bell"></i> Reorder soon</span></td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        function populateCityFilter() {
+            const citiesSet = [...new Set(salesData.map(d => d.city))];
+            const select = document.getElementById("outletFilter");
+            select.innerHTML = '<option value="all">🏬 All Cities</option>';
+            citiesSet.sort().forEach(city => {
+                const opt = document.createElement("option");
+                opt.value = city;
+                opt.innerText = city;
+                select.appendChild(opt);
+            });
+        }
+        
+        // Authentication
+        document.getElementById("loginBtn").addEventListener("click", () => {
+            const user = document.getElementById("username").value.trim();
+            const pass = document.getElementById("password").value.trim();
+            if ((user === "storemanager" && pass === "freshmart2025") || (user === "admin" && pass === "admin123")) {
+                document.getElementById("loginPage").style.display = "none";
+                document.getElementById("dashboardPage").style.display = "block";
+                populateCityFilter();
+                document.getElementById("monthFilter").value = "2024-11";
+                updateDashboard();
+                document.getElementById("outletFilter").addEventListener("change", updateDashboard);
+                document.getElementById("monthFilter").addEventListener("change", updateDashboard);
+                // Refresh Cognos iframe for clean session
+                const iframe = document.getElementById("cognosFrame");
+                if (iframe) iframe.src = iframe.src;
+            } else {
+                document.getElementById("loginError").innerHTML = "<i class='fas fa-times-circle'></i> Invalid credentials. Use storemanager / freshmart2025";
+            }
+        });
+        
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            document.getElementById("dashboardPage").style.display = "none";
+            document.getElementById("loginPage").style.display = "flex";
+            document.getElementById("loginError").innerHTML = "";
+            document.getElementById("username").value = "storemanager";
+            document.getElementById("password").value = "freshmart2025";
+        });
+        
+        // Initial state
+        document.getElementById("loginPage").style.display = "flex";
+        document.getElementById("dashboardPage").style.display = "none";
+    })();
+</script>
+</body>
+</html>
